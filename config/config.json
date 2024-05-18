@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "root",
+    "password": "Navneet@2589@Navneet",
+    "database": "companytask",
+    "host": "localhost",
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "your_username",
+    "password": "your_password",
+    "database": "your_database_name",
+    "host": "localhost",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "your_username",
+    "password": "your_password",
+    "database": "your_database_name",
+    "host": "localhost",
+    "dialect": "mysql"
+  }
+}
