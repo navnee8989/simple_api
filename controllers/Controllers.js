@@ -17,6 +17,7 @@ const RegisterUsers = async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
+    console.log("Register API");
     const emailExists = await db.client.query(
       "SELECT * FROM users WHERE email = $1",
       [email]
