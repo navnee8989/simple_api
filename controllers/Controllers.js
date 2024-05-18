@@ -29,20 +29,18 @@ const RegisterUsers = async (req, res) => {
       });
     }
 
-
     const hashedPassword = await bcrypt.hash(password, 10);
-
 
     await db.client.query(
       "INSERT INTO users (email, password, username) VALUES ($1, $2, $3)",
       [email, hashedPassword, username]
     );
 
-    const MainData = {email,password,username}
+    const MainData = { email, username };
     res.status(201).json({
       success: true,
       message: "User registration successful",
-      data: MainData
+      data: MainData,
     });
   } catch (error) {
     console.error("Error registering user:", error);
@@ -50,39 +48,36 @@ const RegisterUsers = async (req, res) => {
   }
 };
 
-
-const LoginUser = async (req,res)=>{
-    const {email,password}= req.body
-    try {
-        const userEmail = await db.client.query('SELECT * FROM users WHERE email =$1',[email])
-        if (userEmail.length === 0) {
-            res.status(404).send({
-                success: false,
-                massege: "Invalid Email Address",
-
-            })
-        }
-        const match = await bcrypt.compare(password,userEmail.rows[0].password)
-        if (!match) {
-            res.status(404).send({
-                success: false,
-                massege: "password has wrong"
-            })
-        }
-        const MainData = {email,password}
-        res.status(200).send({
-            success:true,
-            massege: "User Login Successfull",
-            data: MainData
-        })
-
-    } catch (error) {
-        console.error("Error Logging User",error)
-            res.status(500).json({error: "internal server from Login"})
-
+const LoginUser = async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const userEmail = await db.client.query("SELECT * FROM users WHERE email = $1", [email]);
+    if (userEmail.rows.length === 0) {
+      return res.status(404).send({
+        success: false,
+        message: "Invalid Email Address",
+      });
     }
-}
 
+    const match = await bcrypt.compare(password, userEmail.rows[0].password);
+    if (!match) {
+      return res.status(404).send({
+        success: false,
+        message: "Invalid password",
+      });
+    }
 
+    const MainData = { email };
+    res.status(200).send({
+      success: true,
+      message: "User Login Successful",
+      data: MainData,
+    });
 
-module.exports = { getAllUsers, RegisterUsers,LoginUser };
+  } catch (error) {
+    console.error("Error Logging User", error);
+    res.status(500).json({ success: false, error: "Internal server error" });
+  }
+};
+
+module.exports = { getAllUsers, RegisterUsers, LoginUser };
