@@ -26,7 +26,8 @@ const RegisterUsers = async (req, res) => {
     if (emailExists.rows.length > 0) {
       return res.status(409).json({
         success: false,
-        message: "Email address already exists. Please provide a different email.",
+        message:
+          "Email address already exists. Please provide a different email.",
       });
     }
 
@@ -37,7 +38,7 @@ const RegisterUsers = async (req, res) => {
       [email, hashedPassword, username]
     );
 
-    const MainData = { email, username ,hashedPassword};
+    const MainData = { email, username, hashedPassword };
     res.status(201).json({
       success: true,
       message: "User registration successful",
@@ -52,7 +53,9 @@ const RegisterUsers = async (req, res) => {
 const LoginUser = async (req, res) => {
   const { email, password } = req.body;
   try {
-    const user = await db.client.query("SELECT * FROM users WHERE email = $1", [email]);
+    const user = await db.client.query("SELECT * FROM users WHERE email = $1", [
+      email,
+    ]);
     if (user.rows.length === 0) {
       return res.status(404).json({
         success: false,
@@ -74,11 +77,45 @@ const LoginUser = async (req, res) => {
       message: "User Login Successful",
       data: MainData,
     });
-
   } catch (error) {
     console.error("Error logging user:", error);
     res.status(500).json({ success: false, error: "Internal server error" });
   }
 };
 
-module.exports = { getAllUsers, RegisterUsers, LoginUser };
+const addUserController = async (req, res) => {
+  const { first_name, last_name, email, phonenumber } = req.body;
+
+  if (!first_name || !last_name || !email || !phonenumber) {
+    return res.status(400).send({
+      success: false,
+      message: "Please provide all the required fields",
+    });
+  }
+
+  try {
+    const query = `
+      INSERT INTO portfolio (first_name, last_name, email, phonenumber)
+      VALUES ($1, $2, $3, $4)
+      RETURNING *;
+    `;
+    const values = [first_name, last_name, email, phonenumber];
+
+    const result = await db.client.query(query, values);
+
+    res.status(201).send({
+      success: true,
+      message: "User added successfully",
+      data: result.rows[0],
+    });
+  } catch (error) {
+    console.error("Error adding user:", error);
+
+    res.status(500).send({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
+};
+
+module.exports = { getAllUsers, RegisterUsers, LoginUser, addUserController };

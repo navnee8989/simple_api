@@ -3,6 +3,7 @@ const userRoutes = require("./routes/Authroutes");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
 const cors = require("cors");
+const portFolioRoutes = require("./routes/PortfolioRoutes");
 
 dotenv.config();
 
@@ -35,6 +36,7 @@ app.use(cors(corsOptions));
 
 // Move the root route handler to the end to avoid it overriding other routes
 app.use("/users", userRoutes);
+app.use("/portfolio", portFolioRoutes);
 
 app.use("/", (req, res) => {
   res.send("<h1>Hello World</h1>");
