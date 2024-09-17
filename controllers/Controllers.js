@@ -50,38 +50,7 @@ const RegisterUsers = async (req, res) => {
   }
 };
 
-const LoginUser = async (req, res) => {
-  const { email, password } = req.body;
-  try {
-    const user = await db.client.query("SELECT * FROM users WHERE email = $1", [
-      email,
-    ]);
-    if (user.rows.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "Invalid email or password",
-      });
-    }
 
-    const match = await bcrypt.compare(password, user.rows[0].password);
-    if (!match) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid email or password",
-      });
-    }
-
-    const MainData = { email };
-    res.status(200).json({
-      success: true,
-      message: "User Login Successful",
-      data: MainData,
-    });
-  } catch (error) {
-    console.error("Error logging user:", error);
-    res.status(500).json({ success: false, error: "Internal server error" });
-  }
-};
 
 const addUserController = async (req, res) => {
   const { first_name, last_name, email, phonenumber } = req.body;
@@ -118,4 +87,4 @@ const addUserController = async (req, res) => {
   }
 };
 
-module.exports = { getAllUsers, RegisterUsers, LoginUser, addUserController };
+module.exports = { getAllUsers, RegisterUsers, addUserController };
