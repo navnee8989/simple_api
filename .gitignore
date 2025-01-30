@@ -18,3 +18,7 @@ npm-debug.log*
 .DS_Store
 Thumbs.db
 .vercel
+
+git rm -r --cached .vercel
+git rm -r --cached node_modules
+git rm -r --cached .env
